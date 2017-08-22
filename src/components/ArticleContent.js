@@ -1,7 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export default class ArticleContent extends Component {
-	render() {
-		return <p>{this.props.content}</p>;
-	}
+export default function ArticleContent(props) {
+	return <p>{props.content}</p>;
 }

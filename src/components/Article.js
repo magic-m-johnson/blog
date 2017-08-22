@@ -1,14 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ArticleHead from './ArticleHead';
 import ArticleContent from './ArticleContent';
 
-export default class Article extends Component {
-	render() {
-		return (
-			<div id={this.props.index}>
-				<ArticleHead content={this.props.article.head} />
-				<ArticleContent content={this.props.article.content} />
-			</div>
-		)
-	}
+export default function Article(props) {
+	return (
+		<div id={props.index}>
+			<ArticleHead content={props.article.head} />
+			<ArticleContent content={props.article.content} />
+		</div>
+	)
 }

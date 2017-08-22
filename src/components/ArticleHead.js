@@ -1,7 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export default class ArticleHead extends Component {
-	render() {
-		return <h3>{this.props.content}</h3>;
-	}
+export default function ArticleHead(props) {
+	return <h3>{props.content}</h3>;
 }
