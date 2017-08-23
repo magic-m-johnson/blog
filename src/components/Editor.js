@@ -1,30 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class Editor extends Component {
-	constructor(props) {
-		super(props);
-		this.handleSubmit = this.handleSubmit.bind(this);
-	}
-	
-	handleSubmit(e) {
-		alert('Hi');
-		e.preventDefault();
-	}
-	
-	render() {
-		return (
-			<form onSubmit={this.handleSubmit}>
-				<h1>Editor</h1>
-				<label htmlFor="headline">Headline: </label>
-				<input type="text" id="headline" placeholder="Headline"/>
-				<br/>
-				<span>Content: </span>
-				<textarea id="content" placeholder="Insert content here..."></textarea>
-				<br/>
-				<input type="submit"/>
-			</form>
-		);
-	}
+export default function Editor(props) {
+	return (
+		<form onSubmit={props.createArticle}>
+			<h1>Editor</h1>
+			<input type="hidden" name="editor_id" value={props.id}/>
+			<label htmlFor="headline">Headline: </label>
+			<input value={props.head} type="text" name="editor_head" id="head" placeholder="Headline" onChange={props.handleInputChange}/>
+			<br/>
+			<span>Content: </span>
+			<textarea value={props.content} id="content" name="editor_content" placeholder="Insert content here..." onChange={props.handleInputChange}></textarea>
+			<br/>
+			<input type="submit"/>
+		</form>
+	);
 }
-
-export default Editor;
