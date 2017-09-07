@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import Head from './Head';
 import Articles from './Articles';
+import Article from './Article';
 import LoginControl from './LoginControl';
 import Editor from './Editor';
-
-import styles from '../style.css';
 
 var axios = require('axios');
 
@@ -18,7 +17,9 @@ class App extends Component {
 			password: '',
 			editor_id: 0,
 			editor_head: '',
-			editor_content: ''
+			editor_content: '',
+      articleDetail: {},
+      detail: false
 		};
 		
 		this.getArticles = this.getArticles.bind(this);
@@ -27,6 +28,8 @@ class App extends Component {
 		this.handleLogout = this.handleLogout.bind(this);
 		this.createArticle = this.createArticle.bind(this);
 		this.deleteArticle = this.deleteArticle.bind(this);
+    this.goToArticleDetails = this.goToArticleDetails.bind(this);
+    this.goBackToAllArticles = this.goBackToAllArticles.bind(this);
 	}
 	
 	componentDidMount() {
@@ -67,7 +70,15 @@ class App extends Component {
 	}
 	
 	createArticle(e) {
-		axios.post('/article', {id: this.state.editor_id, head: this.state.editor_head, content: this.state.editor_content});
+    const today = (new Date()).toLocaleDateString();
+		axios.post('/article', 
+      {
+        id: this.state.editor_id, 
+        head: this.state.editor_head, 
+        content: this.state.editor_content,
+        date: today
+      }
+    );
 		var id = this.state.editor_id + 1;
 		this.setState({editor_id: id});
 		this.setState({editor_head: ''});
@@ -81,6 +92,27 @@ class App extends Component {
 		axios.delete('/article/' + article_id);
 		this.getArticles();
 	}
+
+  goToArticleDetails(article_id) {
+    const articles = this.state.articles.slice();
+    articles.forEach(article => {
+      if (article.id === article_id) {
+        let detail = {};
+        detail.head = article.head;
+        detail.content = article.content;
+        detail.date = article.date;
+        detail.id = article.id;
+        this.setState({
+          articleDetail: detail,
+          detail: true
+        });
+      }
+    });
+  }
+
+  goBackToAllArticles() {
+    this.setState({detail: false});
+  }
 		
 	render() {
 		let elements = [];
@@ -89,7 +121,7 @@ class App extends Component {
 				<Head 
 					key="head"
 					name={"blog-head"} 
-					content={"Simons Blog"} 
+					content={"Irmina Blog"} 
 				/>
 			),
 			(
@@ -100,31 +132,48 @@ class App extends Component {
 					handleLogout={this.handleLogout}
 					handleInputChange={this.handleInputChange}
 				/>
-			),
-			(
+			)
+		);
+    
+    if (this.state.detail === false) {
+			elements.push(
 				<Articles 
 					key="articles" 
 					articles={this.state.articles} 
 					deleteArticle={this.deleteArticle} 
 					isLoggedIn={this.state.isLoggedIn} 
-				/>
-			)
-		);
-		// only show editor when user is logged in
-		if (this.state.isLoggedIn === true) {
-			elements.push(
-				<Editor
-					key="editor"
-					createArticle={this.createArticle}
-					id={this.state.editor_id}
-					head={this.state.editor_head}
-					content={this.state.editor_content}
-					handleInputChange={this.handleInputChange}
+          articleDetails={this.goToArticleDetails}
 				/>
 			);
+
+      // only show editor when user is logged in
+      if (this.state.isLoggedIn === true) {
+        elements.push(
+          <Editor
+            key="editor"
+            createArticle={this.createArticle}
+            id={this.state.editor_id}
+            head={this.state.editor_head}
+            content={this.state.editor_content}
+            handleInputChange={this.handleInputChange}
+          />
+        );
 		}
-		
-		return (
+    } else {
+      elements.push(
+        <Article 
+          key={"articles_" + this.state.articleDetail.id} 
+          article={this.state.articleDetail} 
+          index={this.state.articleDetail.id} 
+          deleteArticle={this.deleteArticle} 
+          isLoggedIn={this.state.isLoggedIn} 
+          articleDetails={this.goToArticleDetails}
+          goBack={this.goBackToAllArticles}
+        />
+      );
+    }
+
+    return (
 			<div>
 				{ elements }
 			</div>

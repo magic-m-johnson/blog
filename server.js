@@ -19,7 +19,13 @@ app.route('/article')
 		});
 	})
 	.post(function (req, res) {
-		res.send(db.insert({id: req.body.id, head: req.body.head, content: req.body.content}));
+		res.send(db.insert(
+    {
+      id: req.body.id, 
+      head: req.body.head, 
+      content: req.body.content,
+      date: req.body.date
+    }));
 	})
 ;
 
